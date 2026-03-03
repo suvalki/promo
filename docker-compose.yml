@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: promo-mongodb
+    restart: always
+    ports:
+      - '27017:27017'
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: rootpassword
+    volumes:
+      - mongodb_data:/data/db
+
+  redis:
+    image: redis:alpine
+    container_name: promo-redis
+    restart: always
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+    # command: redis-server --requirepass yourpassword # Раскомментируй, если нужен пароль
+
+  clickhouse:
+    image: clickhouse/clickhouse-server:latest
+    container_name: promo-clickhouse
+    restart: always
+    ports:
+      - '8123:8123'
+      - '9000:9000'
+    environment:
+      CLICKHOUSE_DB: default
+      CLICKHOUSE_USER: default
+      CLICKHOUSE_PASSWORD: ''
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+      - clickhouse_logs:/var/log/clickhouse-server
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: promo-api
+    restart: always
+    ports:
+      - '3001:3000'
+    environment:
+      - PORT=3000
+      - SECRET=SECRET
+      - MONGODB_URL=mongodb://root:rootpassword@mongodb:27017/promo?authSource=admin
+      - REDIS_URL=redis://redis:6379
+      - CLICKHOUSE_URL=http://clickhouse:8123
+    depends_on:
+      - mongodb
+      - redis
+      - clickhouse
+
+  frontend:
+    image: ghcr.io/suvalki/promo-front:latest
+    platform: linux/amd64
+    container_name: promo-frontend
+    restart: always
+    ports:
+      - '5173:5173'
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:3001
+    depends_on:
+      - api
+
+volumes:
+  mongodb_data:
+  redis_data:
+  clickhouse_data:
+  clickhouse_logs:
