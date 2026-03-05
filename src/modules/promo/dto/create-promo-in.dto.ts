@@ -14,13 +14,13 @@ export default class CreatePromoDto extends createZodDto(
     activeFrom: z
       .preprocess(
         (v) => (v === null || v === 0 || v === '0' ? null : v),
-        z.coerce.date().nullish(),
+        z.iso.datetime().pipe(z.coerce.date()).nullish(),
       )
       .describe('Дата начала действия промокода'),
     expiredAt: z
       .preprocess(
         (v) => (v === null || v === 0 || v === '0' ? null : v),
-        z.coerce.date().nullish(),
+        z.iso.datetime().pipe(z.coerce.date()).nullish(),
       )
       .describe('Дата окончания действия промокода'),
     globalLimit: z

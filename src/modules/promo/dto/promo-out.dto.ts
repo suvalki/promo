@@ -6,26 +6,31 @@ export default class PromoOutDto extends createZodDto(
     id: z.string(),
     code: z.string(),
     discount: z.number(),
-    activeFrom: z.coerce
-      .date()
+    activeFrom: z.iso
+      .datetime()
+      .pipe(z.coerce.date())
       .transform((d) => d.toISOString())
       .nullish(),
-    expiredAt: z.coerce
-      .date()
+    expiredAt: z.iso
+      .datetime()
+      .pipe(z.coerce.date())
       .transform((d) => d.toISOString())
       .nullish(),
     globalLimit: z.number().nullish(),
     userLimit: z.number().nullish(),
-    inactiveAt: z.coerce
-      .date()
+    inactiveAt: z.iso
+      .datetime()
+      .pipe(z.coerce.date())
       .transform((d) => d.toISOString())
       .nullish(),
-    createdAt: z.coerce
-      .date()
+    createdAt: z.iso
+      .datetime()
+      .pipe(z.coerce.date())
       .transform((d) => d.toISOString())
       .nullish(),
-    updatedAt: z.coerce
-      .date()
+    updatedAt: z.iso
+      .datetime()
+      .pipe(z.coerce.date())
       .transform((d) => d.toISOString())
       .nullish(),
   }),

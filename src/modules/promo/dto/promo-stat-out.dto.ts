@@ -6,22 +6,26 @@ export const PromoStatSchema = z.object({
   id: z.string(),
   code: z.string(),
   discount: z.coerce.number(),
-  activeFrom: z.coerce
-    .date()
+  activeFrom: z.iso
+    .datetime()
+    .pipe(z.coerce.date())
     .transform((d) => d.toISOString())
     .nullish(),
-  expiredAt: z.coerce
-    .date()
+  expiredAt: z.iso
+    .datetime()
+    .pipe(z.coerce.date())
     .transform((d) => d.toISOString())
     .nullish(),
   globalLimit: z.coerce.number(),
   userLimit: z.coerce.number(),
-  inactiveAt: z.coerce
-    .date()
+  inactiveAt: z.iso
+    .datetime()
+    .pipe(z.coerce.date())
     .transform((d) => d.toISOString())
     .nullish(),
-  createdAt: z.coerce
-    .date()
+  createdAt: z.iso
+    .datetime()
+    .pipe(z.coerce.date())
     .transform((d) => d.toISOString())
     .nullish(),
   usageCount: z.coerce.number(),
